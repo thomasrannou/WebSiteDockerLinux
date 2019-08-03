@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: aspwebsite
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: aspwebsite
+    spec:
+      containers:
+      - name: aspwebsite
+        image: containeregistrythomas.azurecr.io/linuxwebsite:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aspwebsite
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: aspwebsite
